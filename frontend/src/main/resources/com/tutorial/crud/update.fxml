@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tutorial.crud.controllers.UpdateController">
+    <children>
+        <GridPane layoutX="14.0" layoutY="4.0" prefHeight="600.0" prefWidth="600.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.20001220703125" minWidth="10.0" prefWidth="167.99998474121094" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="531.2000274658203" minWidth="10.0" prefWidth="432.00001525878906" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints maxHeight="209.99999542236327" minHeight="10.0" prefHeight="209.20000762939452" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="183.19998626708983" minHeight="10.0" prefHeight="41.19999237060546" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="161.59998779296876" minHeight="0.0" prefHeight="56.80001220703127" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="281.0" minHeight="10.0" prefHeight="224.19998779296873" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <fx:include source="menu.fxml" />
+                <Label text="Name:" textAlignment="JUSTIFY" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                    <GridPane.margin>
+                        <Insets right="5.0" />
+                    </GridPane.margin>
+                </Label>
+                <Label text="Price:" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                    <GridPane.margin>
+                        <Insets right="5.0" />
+                    </GridPane.margin>
+                </Label>
+                <Button mnemonicParsing="false" onAction="#update" text="UPDATE" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                <TextField fx:id="productName" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                    <GridPane.margin>
+                        <Insets left="5.0" right="5.0" />
+                    </GridPane.margin>
+                </TextField>
+                <TextField fx:id="productPrice" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                    <GridPane.margin>
+                        <Insets left="5.0" right="5.0" />
+                    </GridPane.margin>
+                </TextField>
+            </children>
+        </GridPane>
+    </children>
+</AnchorPane>

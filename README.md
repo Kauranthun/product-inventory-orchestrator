@@ -13,27 +13,9 @@ The architecture relies on strict protocol and concern separation across four ke
 3. **Message Broker (ActiveMQ - Port 61616):** The asynchronous messaging backbone holding isolated, encrypted transport queues.
 4. **Backend Microservice (Port 8082):** The core business domain manager handling data persistence and strict business rule validation.
 
-## 🛡️ Implemented Security Architecture
-
-The entire ecosystem is hardened based on a strict 3-Pillar Security Framework:
-
-### 1. Route Security & RBAC (Pillar 1)
-* **JWT Interception:** Custom `JwtAuthenticationProcessor` intercepts all ingress routes to extract and cryptographically verify tokens issued by the authentication service.
-* **Role-Based Access Control (RBAC):** Fine-grained privileges are checked directly at the Camel routing layer:
-  * `ROLE_USER` / `ROLE_ADMIN` are permitted to execute read operations (`GET`).
-  * `ROLE_ADMIN` is strictly required to execute mutating operations (`POST`, `PUT`, `DELETE`).
-
-### 2. Payload-Level Security (Pillar 2)
-* **Data-in-Transit Encryption:** Message payloads sent to the ActiveMQ broker are symmetrically encrypted using **AES-128** paired with Base64 encoding at the Proxy boundaries to guarantee absolute data confidentiality inside the queues.
-* **Strict Jackson Marshalling:** Mitigates Remote Code Execution (RCE) vectors by disabling polymorphic type lookups and binding payloads exclusively to explicit Data Transfer Objects (DTOs).
-* **Delegated Validation:** Camel acts as a high-performance proxy; data constraint validation is deliberately delegated to the Backend service to eliminate processing overhead in the routing layer.
-
-### 3. Endpoint & Configuration Hardening (Pillar 3)
-* **Stateless Gateway:** The Spring Security 7 filter chain on the Camel Proxy enforces a `STATELESS` session creation policy and disables CSRF since all operations rely entirely on ephemeral bearer tokens.
-* **Broker Hardening:** Anonymous connections to ActiveMQ are disabled. Camel utilizes secure authenticated credentials over isolated internal ports, optimized via a native Jakarta-compliant connection pool (`pooled-jms`).
-* **Externalized Configuration:** Zero hardcoded secrets. All sensitive keys, database passwords, and cryptographic constants are loaded dynamically via environment variables with secure local fallbacks.
-
----
+[JavaFX Front] --(HTTP REST + JWT)--> [Camel Proxy In] --(AES-128 Encrypted JMS)--> [ActiveMQ]
+                                                                                          |
+[Backend API] <-------(HTTP REST)-------- [Camel Proxy Out] <-----------------------------+
 
 ## ⚙️ Configuration & Environment Variables
 

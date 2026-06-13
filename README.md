@@ -13,9 +13,6 @@ The architecture relies on strict protocol and concern separation across four ke
 3. **Message Broker (ActiveMQ - Port 61616):** The asynchronous messaging backbone holding isolated, encrypted transport queues.
 4. **Backend Microservice (Port 8082):** The core business domain manager handling data persistence and strict business rule validation.
 
-[JavaFX Front] --(HTTP REST + JWT)--> [Camel Proxy In] --(AES-128 Encrypted JMS)--> [ActiveMQ]
-                                                                                          |
-[Backend API] <-------(HTTP REST)-------- [Camel Proxy Out] <-----------------------------+
 
 ## ⚙️ Configuration & Environment Variables
 

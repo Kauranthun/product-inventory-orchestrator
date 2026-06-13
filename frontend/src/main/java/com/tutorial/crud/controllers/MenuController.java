@@ -125,9 +125,28 @@ public class MenuController {
         try{
             Main.service.restoreDb();
         } catch (Exception e) {
+            e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Error in restore");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    public void logout(){
+        try{
+            Main.service.logout();
+            FXMLLoader fxmlLoader = new FXMLLoader(com.tutorial.crud.Main.class.getResource("Auth.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 600, 600);
+            com.tutorial.crud.Main.getCentralStage().setTitle("Authentication");
+            com.tutorial.crud.Main.getCentralStage().setScene(scene);
+            com.tutorial.crud.Main.getCentralStage().show();
+
+        }catch (Exception e){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error in logout");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }

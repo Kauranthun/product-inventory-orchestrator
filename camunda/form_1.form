@@ -1,0 +1,68 @@
+{
+  "components": [
+    {
+      "label": "Choose Action",
+      "values": [
+        {
+          "label": "Create a new product",
+          "value": "create"
+        },
+        {
+          "label": "Update an existing product",
+          "value": "update"
+        },
+        {
+          "label": "Delete a product",
+          "value": "delete"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_1di2i4z",
+        "columns": null
+      },
+      "id": "Field_0h0jf65",
+      "key": "actionType",
+      "searchable": false
+    },
+    {
+      "label": "Product ID (Only for Update/Delete)",
+      "type": "number",
+      "layout": {
+        "row": "Row_076l6se",
+        "columns": null
+      },
+      "id": "Field_14okdjf",
+      "key": "targetId"
+    },
+    {
+      "label": "Product Name (Only for Create/Update)",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_15k2rdf",
+        "columns": null
+      },
+      "id": "Field_1m3ki45",
+      "key": "productName"
+    },
+    {
+      "label": "Product Price (Only for Create/Update)",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0mf5xhi",
+        "columns": null
+      },
+      "id": "Field_0o66rew",
+      "key": "productPrice"
+    }
+  ],
+  "type": "default",
+  "id": "action-form",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.9.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.47.0"
+  },
+  "schemaVersion": 19
+}

@@ -28,6 +28,11 @@
                     <MenuItem mnemonicParsing="false" onAction="#restoreDb" text="Restore" />
                 </items>
             </Menu>
+            <Menu mnemonicParsing="false" text="Profile">
+                <items>
+                    <MenuItem mnemonicParsing="false" onAction="#logout" text="Logout" />
+                </items>
+            </Menu>
         </menus>
     </MenuBar>
 

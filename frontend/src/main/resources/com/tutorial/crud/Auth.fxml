@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tutorial.crud.controllers.AuthController">
+
+    <TabPane AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" tabClosingPolicy="UNAVAILABLE">
+
+        <Tab text="Login">
+            <VBox alignment="CENTER" spacing="15.0">
+                <padding>
+                    <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+                </padding>
+
+                <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Welcome Back!" />
+
+                <VBox spacing="5.0">
+                    <Label text="Email address" />
+                    <TextField fx:id="nameLogin" promptText="Enter your email" />
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <Label text="Password" />
+                    <PasswordField fx:id="passwordLogin" promptText="Enter your password" />
+                </VBox>
+
+                <Button mnemonicParsing="false" onAction="#handleLogin" prefWidth="150.0" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;" text="Login">
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </Button>
+            </VBox>
+        </Tab>
+
+        <Tab text="Sign Up">
+            <VBox alignment="CENTER" spacing="15.0">
+                <padding>
+                    <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+                </padding>
+
+                <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Create an Account" />
+
+                <VBox spacing="5.0">
+                    <Label text="Full Name" />
+                    <TextField fx:id="nameSignup" promptText="Enter your name" />
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <Label text="Password" />
+                    <PasswordField fx:id="passwordSignup" promptText="Create a password" />
+                </VBox>
+
+                <Button mnemonicParsing="false" onAction="#handleSignup" prefWidth="150.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" text="Sign Up">
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </Button>
+            </VBox>
+        </Tab>
+
+    </TabPane>
+</AnchorPane>

@@ -1,0 +1,12 @@
+{
+  "capturedAt" : "2026-06-13T14:53:00.8967734",
+  "routeId" : "proxy-out-get-all-product",
+  "httpMethod" : "GET",
+  "endpoint" : "http://localhost:8082/product/list",
+  "httpStatus" : 200,
+  "response" : [ {
+    "id" : 1,
+    "name" : "Iphone 17",
+    "price" : 899.0
+  } ]
+}

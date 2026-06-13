@@ -19,7 +19,7 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
-    @GetMapping("/list") // "/lista" -> "/list"
+    @GetMapping("/list")
     public ResponseEntity<List<Product>> list(){
         List<Product> list = productService.list();
         return new ResponseEntity(list, HttpStatus.OK);

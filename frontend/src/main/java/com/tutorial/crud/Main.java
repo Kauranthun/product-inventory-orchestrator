@@ -15,9 +15,9 @@ public class Main extends Application{
     public void start(Stage stage) throws IOException {
 
         centralStage = stage;
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Auth.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 600);
-        stage.setTitle("Hello!");
+        stage.setTitle("Authentication!");
         stage.setScene(scene);
         stage.show();
     }

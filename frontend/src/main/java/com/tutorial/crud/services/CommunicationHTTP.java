@@ -2,7 +2,10 @@ package com.tutorial.crud.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tutorial.crud.entity.JSONWebToken;
 import com.tutorial.crud.entity.Product;
+import com.tutorial.crud.entity.Credentials;
+import com.tutorial.crud.entity.RefreshToken;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,10 +18,13 @@ import java.util.List;
 public class CommunicationHTTP {
     private final HttpClient client = HttpClient.newHttpClient();
     private final ObjectMapper mapper = new ObjectMapper();
+    private final JSONWebToken userAct = new JSONWebToken();
+
 
     public List<Product> getAll() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/product/list"))
+                .uri(URI.create("https://localhost:8081/camel/product/list"))
+                .header("Authorization","Bearer " + userAct.getAccessToken())
                 .GET().build();
 
         HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString());
@@ -33,7 +39,8 @@ public class CommunicationHTTP {
 
     public Product getById(String id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/product/detail/"+id))
+                .uri(URI.create("https://localhost:8081/camel/product/detail/"+id))
+                .header("Authorization","Bearer " + userAct.getAccessToken())
                 .GET().build();
 
         HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString());
@@ -50,8 +57,9 @@ public class CommunicationHTTP {
         String jsonBody = mapper.writeValueAsString(product);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/product/create"))
+                .uri(URI.create("https://localhost:8081/camel/product/create"))
                 .header("Content-Type", "application/json")
+                .header("Authorization","Bearer " + userAct.getAccessToken())
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody)).build();
 
         HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString());
@@ -70,8 +78,9 @@ public class CommunicationHTTP {
         System.out.println(product.getId());
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/product/update/"+product.getId()))
+                .uri(URI.create("https://localhost:8081/camel/product/update/"+product.getId()))
                 .header("Content-Type", "application/json")
+                .header("Authorization","Bearer " + userAct.getAccessToken())
                 .PUT(HttpRequest.BodyPublishers.ofString(jsonBody)).build();
 
         HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString());
@@ -86,7 +95,8 @@ public class CommunicationHTTP {
 
     public void delete(int id) throws IOException, InterruptedException{
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/product/delete/"+ id))
+                .uri(URI.create("https://localhost:8081/camel/product/delete/"+ id))
+                .header("Authorization","Bearer " + userAct.getAccessToken())
                 .DELETE().build();
 
         HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString());
@@ -102,7 +112,8 @@ public class CommunicationHTTP {
 
     public void backupDb() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/db/backup"))
+                .uri(URI.create("http://localhost:8082/db/backup"))
+                .header("Authorization","Bearer " + userAct.getAccessToken())
                 .POST(HttpRequest.BodyPublishers.noBody()).build();
 
         HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString());
@@ -117,7 +128,8 @@ public class CommunicationHTTP {
 
     public void restoreDb() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/db/restore"))
+                .uri(URI.create("http://localhost:8082/db/restore"))
+                .header("Authorization","Bearer " + userAct.getAccessToken())
                 .POST(HttpRequest.BodyPublishers.noBody()).build();
 
         HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString());
@@ -127,5 +139,83 @@ public class CommunicationHTTP {
         }else{
             throw new RuntimeException("Error in restore : " + response.statusCode());
         }
+    }
+
+    public void Signup(Credentials newUser) throws IOException, InterruptedException {
+        String jsonBody = mapper.writeValueAsString(newUser);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8082/auth/signup"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                .build();
+
+        HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            JSONWebToken tokenObj = mapper.readValue(response.body(), JSONWebToken.class);
+            this.userAct.setAccessToken(tokenObj.getAccessToken());
+            this.userAct.setRefreshToken(tokenObj.getRefreshToken());
+        } else {
+            throw new RuntimeException("Connection failed : " + response.statusCode());
+        }
+    }
+
+
+
+    public void login(Credentials credentials) throws IOException, InterruptedException {
+        String jsonBody = mapper.writeValueAsString(credentials);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8082/auth/login"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                .build();
+
+        HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            JSONWebToken tokenObj = mapper.readValue(response.body(), JSONWebToken.class);
+            this.userAct.setAccessToken(tokenObj.getAccessToken());
+            this.userAct.setRefreshToken(tokenObj.getRefreshToken());
+
+        } else {
+            throw new RuntimeException("Connection failed : " + response.statusCode());
+        }
+    }
+
+    public void refreshTokens() throws IOException, InterruptedException {
+
+        var bodyMap = java.util.Map.of("refresh_token", userAct.getRefreshToken());
+        String jsonBody = mapper.writeValueAsString(bodyMap);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8082/auth/refresh"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            JSONWebToken tokenObj = mapper.readValue(response.body(), JSONWebToken.class);
+            this.userAct.setAccessToken(tokenObj.getAccessToken());
+        } else {
+            throw new RuntimeException("Refresh failed : " + response.statusCode());
+        }
+    }
+
+    public void logout() throws IOException, InterruptedException {
+
+        RefreshToken dto = new RefreshToken();
+        dto.setRefreshToken(userAct.getRefreshToken());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8082/auth/logout"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(dto)))
+                .build();
+
+        client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        this.userAct.setAccessToken(null);
+        this.userAct.setRefreshToken(null);
     }
 }

@@ -1,10 +1,8 @@
 package com.tutorial.crud.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tutorial.crud.Main;
 import com.tutorial.crud.entity.Product;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;

@@ -1,5 +1,6 @@
 package com.tutorial.camel.demo.controller;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,16 +61,28 @@ public class CamelTriggerController {
             headers.put("Authorization", authHeader);
         }
 
-        String result = producerTemplate.requestBodyAndHeaders("direct:create-product", productJson, headers, String.class);
-        return ResponseEntity.ok(result);
+        Exchange exchange = producerTemplate.request("direct:create-product", ex -> {
+            ex.getIn().setBody(productJson);
+            ex.getIn().setHeaders(headers);
+        });
+
+        String responseBody = exchange.getMessage().getBody(String.class);
+
+        Integer camelHttpStatus = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+
+        if (camelHttpStatus != null) {
+            return ResponseEntity.status(camelHttpStatus).body(responseBody);
+        }
+
+        return ResponseEntity.ok(responseBody);
     }
 
-    @PutMapping(value="/product/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/product/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> triggerUpdate(
             @RequestBody String productJson,
             @PathVariable Long id,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
-        LOG.info("HTTP trigger received: POST /camel/product/update/{}", id);
+        LOG.info("HTTP trigger received: PUT /camel/product/update/{}", id);
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("targetId", id);
@@ -77,11 +90,22 @@ public class CamelTriggerController {
             headers.put("Authorization", authHeader);
         }
 
-        String result = producerTemplate.requestBodyAndHeaders("direct:update-product", productJson, headers, String.class);
-        return ResponseEntity.ok(result);
+        Exchange exchange = producerTemplate.request("direct:update-product", ex -> {
+            ex.getIn().setBody(productJson);
+            ex.getIn().setHeaders(headers);
+        });
+
+        String responseBody = exchange.getMessage().getBody(String.class);
+        Integer camelHttpStatus = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+
+        if (camelHttpStatus != null) {
+            return ResponseEntity.status(camelHttpStatus).body(responseBody);
+        }
+
+        return ResponseEntity.ok(responseBody);
     }
 
-    @DeleteMapping(value="/product/delete/{id}")
+    @DeleteMapping(value = "/product/delete/{id}")
     public ResponseEntity<String> triggerDelete(
             @PathVariable Long id,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
@@ -93,7 +117,18 @@ public class CamelTriggerController {
             headers.put("Authorization", authHeader);
         }
 
-        String result = producerTemplate.requestBodyAndHeaders("direct:delete-product", null, headers, String.class);
-        return ResponseEntity.ok(result);
+        Exchange exchange = producerTemplate.request("direct:delete-product", ex -> {
+            ex.getIn().setBody(null);
+            ex.getIn().setHeaders(headers);
+        });
+
+        String responseBody = exchange.getMessage().getBody(String.class);
+        Integer camelHttpStatus = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+
+        if (camelHttpStatus != null) {
+            return ResponseEntity.status(camelHttpStatus).body(responseBody);
+        }
+
+        return ResponseEntity.ok(responseBody);
     }
 }

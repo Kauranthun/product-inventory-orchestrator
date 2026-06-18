@@ -24,6 +24,7 @@ public class DeleteRoute extends RouteBuilder {
         onException(Exception.class)
                 .handled(true)
                 .log("ERROR in delete-" + AppConfig.ENTITY_NAME + ": ${exception.message}")
+                .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500))
                 .setBody(simple("""
                          {"error": "${exception.message}", "routeId": "delete-%s"}"""
                         .formatted(AppConfig.ENTITY_NAME)))

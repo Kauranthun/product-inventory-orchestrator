@@ -28,6 +28,7 @@ public class UpdateRoute extends RouteBuilder{
         onException(Exception.class)
                 .handled(true)
                 .log("ERROR in update-" + AppConfig.ENTITY_NAME + ": ${exception.message}")
+                .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500))
                 .setBody(simple("""
                          {"error": "${exception.message}", "routeId": "update-%s"}"""
                         .formatted(AppConfig.ENTITY_NAME)))

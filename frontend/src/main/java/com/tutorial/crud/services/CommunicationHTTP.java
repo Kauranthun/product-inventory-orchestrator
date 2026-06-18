@@ -14,9 +14,39 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
 
 public class CommunicationHTTP {
-    private final HttpClient client = HttpClient.newHttpClient();
+
+    private final HttpClient client = createUnsafeHttpClient();
+
+    private static HttpClient createUnsafeHttpClient() {
+        try {
+            System.setProperty("jdk.internal.httpclient.disableHostnameVerification", "true");
+
+            TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() { return null; }
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+                    }
+            };
+
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+            return HttpClient.newBuilder()
+                    .sslContext(sslContext)
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException("Impossible de configurer le client HTTP", e);
+        }
+    }
+
     private final ObjectMapper mapper = new ObjectMapper();
     private final JSONWebToken userAct = new JSONWebToken();
 
@@ -63,6 +93,9 @@ public class CommunicationHTTP {
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody)).build();
 
         HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString());
+
+        System.out.println(response.body());
+        System.out.println(response.statusCode());
 
         if(response.statusCode()==200){
             System.out.println("Success creation");

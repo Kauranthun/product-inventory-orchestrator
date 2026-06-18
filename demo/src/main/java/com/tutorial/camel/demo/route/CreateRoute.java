@@ -28,6 +28,7 @@ public class CreateRoute extends RouteBuilder {
         onException(Exception.class)
                 .handled(true)
                 .log("ERROR in create-" + AppConfig.ENTITY_NAME + ": ${exception.message}")
+                .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500))
                 .setBody(simple("""
                          {"error": "${exception.message}", "routeId": "create-%s"}"""
                         .formatted(AppConfig.ENTITY_NAME)))

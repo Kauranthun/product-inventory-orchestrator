@@ -1,8 +1,12 @@
 {
-  "capturedAt" : "2026-06-13T14:11:25.7797715",
+  "capturedAt" : "2026-06-18T15:46:04.4208543",
   "routeId" : "proxy-out-get-all-product",
   "httpMethod" : "GET",
   "endpoint" : "http://localhost:8082/product/list",
   "httpStatus" : 200,
-  "response" : [ ]
+  "response" : [ {
+    "id" : 1,
+    "name" : "Iphone 13",
+    "price" : 499.0
+  } ]
 }

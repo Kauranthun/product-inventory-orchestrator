@@ -4,17 +4,17 @@ An enterprise-grade, secure asynchronous integration ecosystem built using **Apa
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 The architecture relies on strict protocol and concern separation across four key layers:
 
 1. **Frontend (JavaFX):** The client application requiring user authentication.
-2. **Camel Integration Proxy (Port 8081):** The middleware gateway managing stateless HTTP perimeters, JWT validation, role checking, and payload transformations.
+2. **Camel Integration Proxy (Port 8443):** The middleware gateway managing stateless HTTPs perimeters, JWT validation, role checking, and payload transformations.
 3. **Message Broker (ActiveMQ - Port 61616):** The asynchronous messaging backbone holding isolated, encrypted transport queues.
 4. **Backend Microservice (Port 8082):** The core business domain manager handling data persistence and strict business rule validation.
 
 
-## ⚙️ Configuration & Environment Variables
+## Configuration & Environment Variables
 
 Before launching the applications, you can externalize secrets by setting the following environment variables on your system:
 
@@ -26,7 +26,7 @@ Before launching the applications, you can externalize secrets by setting the fo
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 * **Java 21** (Eclipse Adoptium/Hotspot recommended)
@@ -40,16 +40,16 @@ Download apache-activemq-6.2.6-bin.zip at this url https://activemq.apache.org/c
 bin\activemq start
 ```
 
-### 2. Run the Backend Microservice
+### 2. Run the Backend
 Open the backend folder in an IDE, go to the CrudApplication.java file and press run
 
 ### 3. Run the Apache Camel Proxy
-Open the backend folder in an IDE, go to the DemoApplication.java file and press run
+Open the demo folder in an IDE, go to the DemoApplication.java file and press run
 
 ### 4. Run the JavaFX Frontend Application
-Open the backend folder in an IDE, go to the Main.java file and press run
+Open the frontend folder in an IDE, go to the Main.java file and press run
 
-## 📂 Project Structure
+## Project Structure
 
 ├── backend/          # Spring Boot Data API & Core Domain Logic (Port 8082)
 

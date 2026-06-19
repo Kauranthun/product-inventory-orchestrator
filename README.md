@@ -18,11 +18,11 @@ The architecture relies on strict protocol and concern separation across four ke
 
 Before launching the applications, you can externalize secrets by setting the following environment variables on your system:
 
-| Variable Name | Description | Default Fallback |
-| :--- | :--- | :--- |
-| `ACTIVEMQ_USER` | Connection username for the JMS Broker | `admin` |
-| `ACTIVEMQ_PASSWORD` | Connection password for the JMS Broker | `admin` |
-| `APP_CRYPTO_KEY` | 16-character AES symmetric encryption key | `MySecretKey12345` |
+| Variable Name          | Description                                 | Default Fallback |
+|:-----------------------|:--------------------------------------------|:-----------------|
+| `ACTIVEMQ_USER`        | Connection username for the JMS Broker      | `admin`          |
+| `ACTIVEMQ_PASSWORD`    | Connection password for the JMS Broker      | `admin`          |
+| `CAMEL_PGP_PASSPHRASE` | Password of the encrypt and decrypt gpg key | `corentin`       |
 
 ---
 
@@ -53,7 +53,7 @@ Open the frontend folder in an IDE, go to the Main.java file and press run
 
 ├── backend/          # Spring Boot Data API & Core Domain Logic (Port 8082)
 
-├── demo/             # Apache Camel Integration & Security Proxy (Port 8081)
+├── demo/             # Apache Camel Integration & Security Proxy (Port 8443)
 
 ├── frontend/         # JavaFX UI Client Application 
 

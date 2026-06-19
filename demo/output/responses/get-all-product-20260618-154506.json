@@ -1,8 +1,0 @@
-{
-  "capturedAt" : "2026-06-18T15:45:06.1816898",
-  "routeId" : "proxy-out-get-all-product",
-  "httpMethod" : "GET",
-  "endpoint" : "http://localhost:8082/product/list",
-  "httpStatus" : 200,
-  "response" : [ ]
-}

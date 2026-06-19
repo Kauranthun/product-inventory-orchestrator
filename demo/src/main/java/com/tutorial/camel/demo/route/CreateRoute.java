@@ -1,30 +1,34 @@
 package com.tutorial.camel.demo.route;
 
 import com.tutorial.camel.demo.config.AppConfig;
-import com.tutorial.camel.demo.processor.JwtAuthenticationProcessor;
 import com.tutorial.camel.demo.processor.ResponseProcessor;
-import com.tutorial.camel.demo.service.CryptoService;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.spring.security.SpringSecurityAuthorizationPolicy;
+import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class CreateRoute extends RouteBuilder {
-    private final ResponseProcessor responseProcessor;
-    private final JwtAuthenticationProcessor jwtAuthenticationProcessor;
-    private final CryptoService cryptoService;
 
-    public CreateRoute(ResponseProcessor responseProcessor, JwtAuthenticationProcessor jwtAuthenticationProcessor, CryptoService cryptoService) {
+    private final ResponseProcessor responseProcessor;
+
+    public CreateRoute(ResponseProcessor responseProcessor) {
         this.responseProcessor = responseProcessor;
-        this.jwtAuthenticationProcessor = jwtAuthenticationProcessor;
-        this.cryptoService = cryptoService;
     }
 
     @Override
     public void configure() {
+
+        PGPDataFormat encryptor = new PGPDataFormat();
+        encryptor.setKeyFileName("classpath:keys/partner-pubring.gpg");
+        encryptor.setKeyUserid("corentin.loret29@gmail.com");
+
+        PGPDataFormat decryptor = new PGPDataFormat();
+        decryptor.setKeyFileName("classpath:keys/private-key.gpg");
+        encryptor.setKeyUserid("corentin.loret29@gmail.com");
+        decryptor.setPassword("{{camel.pgp.passphrase}}");
+
         onException(Exception.class)
                 .handled(true)
                 .log("ERROR in create-" + AppConfig.ENTITY_NAME + ": ${exception.message}")
@@ -37,18 +41,7 @@ public class CreateRoute extends RouteBuilder {
         // From client to active mq
         from("direct:create-" + AppConfig.ENTITY_NAME)
                 .routeId("proxy-in-create-" + AppConfig.ENTITY_NAME)
-                .process(jwtAuthenticationProcessor)
-                .process(exchange -> {
-                    var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
-                    if (auth == null || auth.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-                        throw new org.springframework.security.access.AccessDeniedException("Access Denied: Insufficient Route Permissions");
-                    }
-                })
-                .process(exchange -> {
-                    String plainJson = exchange.getIn().getBody(String.class);
-                    String encryptedJson = cryptoService.encrypt(plainJson);
-                    exchange.getIn().setBody(encryptedJson);
-                })
+                .marshal(encryptor)
                 .log(">>> [Proxy IN] Request received. Send to the queue...")
                 .to("activemq:queue:product.create?exchangePattern=InOut")
                 .log("<<< [Proxy IN] Final response send back to client");
@@ -56,11 +49,9 @@ public class CreateRoute extends RouteBuilder {
         // From active mq to backend
         from("activemq:queue:product.create")
                 .routeId("proxy-out-create-" + AppConfig.ENTITY_NAME)
-                .process(exchange -> {
-                    String encryptedJson = exchange.getIn().getBody(String.class);
-                    String decryptedJson = cryptoService.decrypt(encryptedJson);
-                    exchange.getIn().setBody(decryptedJson);
-                })
+
+                .unmarshal(decryptor)
+
                 .log(">>> Triggered: create-" + AppConfig.ENTITY_NAME + " with body: ${body}")
 
                 .setProperty(ResponseProcessor.OP_METHOD, constant("POST"))

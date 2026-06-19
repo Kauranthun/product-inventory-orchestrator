@@ -28,7 +28,6 @@ public class CreateRoute extends RouteBuilder {
         onException(Exception.class)
                 .handled(true)
                 .log("ERROR in create-" + AppConfig.ENTITY_NAME + ": ${exception.message}")
-                .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500))
                 .setBody(simple("""
                          {"error": "${exception.message}", "routeId": "create-%s"}"""
                         .formatted(AppConfig.ENTITY_NAME)))
@@ -72,15 +71,11 @@ public class CreateRoute extends RouteBuilder {
 
                 .to(AppConfig.BASE_URL + "/product/create?bridgeEndpoint=true&throwExceptionOnFailure=false")
 
-                .setProperty("RAW_BACKEND_RESPONSE", body())
-
                 .process(responseProcessor)
                 .to("file:%s?fileName=create-%s-res-${date:now:%s}.json"
                         .formatted(AppConfig.OUTPUT_DIR,
                                 AppConfig.ENTITY_NAME,
                                 AppConfig.TIMESTAMP_FORMAT))
-
-                .setBody(exchangeProperty("RAW_BACKEND_RESPONSE"))
 
                 .log("<<< [Proxy OUT] Queue treatment successfully finished");
 

@@ -66,15 +66,11 @@ public class GetOneRoute extends RouteBuilder {
 
                 .to(AppConfig.BASE_URL + "/product/detail" + "?bridgeEndpoint=true&throwExceptionOnFailure=false")
 
-                .setProperty("RAW_BACKEND_RESPONSE", body())
-
                 .process(responseProcessor)
                 .to("file:%s?fileName=get-one-%s-id${header.targetId}-${date:now:%s}.json"
                         .formatted(AppConfig.OUTPUT_DIR,
                                 AppConfig.ENTITY_NAME,
                                 AppConfig.TIMESTAMP_FORMAT))
-
-                .setBody(exchangeProperty("RAW_BACKEND_RESPONSE"))
 
                 .log("<<< [Proxy OUT] Queue treatment successfully finished");
 

@@ -1,6 +1,5 @@
 package com.tutorial.camel.demo.controller;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +21,7 @@ public class CamelTriggerController {
     }
 
     @GetMapping(value = "/product/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> triggerGetAll(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+    public ResponseEntity<String> triggerGetAll(@RequestHeader(value = "Authorization") String authHeader) {
         LOG.info("HTTP trigger received: GET /camel/product/list");
 
         Map<String, Object> headers = new HashMap<>();
@@ -37,7 +36,7 @@ public class CamelTriggerController {
     @GetMapping(value = "/product/detail/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> triggerGetOne(
             @PathVariable Long id,
-            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+            @RequestHeader(value = "Authorization") String authHeader) {
         LOG.info("HTTP trigger received: GET /camel/product/detail/{}", id);
 
         Map<String, Object> headers = new HashMap<>();
@@ -53,7 +52,7 @@ public class CamelTriggerController {
     @PostMapping(value = "/product/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> triggerCreate(
             @RequestBody String productJson,
-            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+            @RequestHeader(value = "Authorization") String authHeader) {
         LOG.info("HTTP trigger received: POST /camel/product/create");
 
         Map<String, Object> headers = new HashMap<>();
@@ -61,20 +60,9 @@ public class CamelTriggerController {
             headers.put("Authorization", authHeader);
         }
 
-        Exchange exchange = producerTemplate.request("direct:create-product", ex -> {
-            ex.getIn().setBody(productJson);
-            ex.getIn().setHeaders(headers);
-        });
+        String result = producerTemplate.requestBodyAndHeaders("direct:create-product", productJson,headers,String.class);
 
-        String responseBody = exchange.getMessage().getBody(String.class);
-
-        Integer camelHttpStatus = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
-
-        if (camelHttpStatus != null) {
-            return ResponseEntity.status(camelHttpStatus).body(responseBody);
-        }
-
-        return ResponseEntity.ok(responseBody);
+        return ResponseEntity.ok(result);
     }
 
     @PutMapping(value = "/product/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -90,19 +78,9 @@ public class CamelTriggerController {
             headers.put("Authorization", authHeader);
         }
 
-        Exchange exchange = producerTemplate.request("direct:update-product", ex -> {
-            ex.getIn().setBody(productJson);
-            ex.getIn().setHeaders(headers);
-        });
+        String result = producerTemplate.requestBodyAndHeaders("direct:update-product",productJson,headers,String.class);
 
-        String responseBody = exchange.getMessage().getBody(String.class);
-        Integer camelHttpStatus = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
-
-        if (camelHttpStatus != null) {
-            return ResponseEntity.status(camelHttpStatus).body(responseBody);
-        }
-
-        return ResponseEntity.ok(responseBody);
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping(value = "/product/delete/{id}")
@@ -117,18 +95,8 @@ public class CamelTriggerController {
             headers.put("Authorization", authHeader);
         }
 
-        Exchange exchange = producerTemplate.request("direct:delete-product", ex -> {
-            ex.getIn().setBody(null);
-            ex.getIn().setHeaders(headers);
-        });
+        String result = producerTemplate.requestBodyAndHeaders("direct:delete-product",null,headers,String.class);
 
-        String responseBody = exchange.getMessage().getBody(String.class);
-        Integer camelHttpStatus = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
-
-        if (camelHttpStatus != null) {
-            return ResponseEntity.status(camelHttpStatus).body(responseBody);
-        }
-
-        return ResponseEntity.ok(responseBody);
+        return ResponseEntity.ok(result);
     }
 }

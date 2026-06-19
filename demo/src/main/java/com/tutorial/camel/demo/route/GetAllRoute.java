@@ -60,16 +60,12 @@ public class GetAllRoute extends RouteBuilder {
                 .setProperty(ResponseProcessor.OP_ENDPOINT, simple(AppConfig.BASE_URL + "/product/list"))
                 .setHeader(Exchange.HTTP_METHOD, constant("GET"))
                 .to(AppConfig.BASE_URL +"/product/list"+ "?bridgeEndpoint=true&throwExceptionOnFailure=false")
-
-                .setProperty("RAW_BACKEND_RESPONSE", body())
-
+                
                 .process(responseProcessor)
                 .to("file:%s?fileName=get-all-%s-${date:now:%s}.json"
                         .formatted(AppConfig.OUTPUT_DIR,
                                 AppConfig.ENTITY_NAME,
                                 AppConfig.TIMESTAMP_FORMAT))
-
-                .setBody(exchangeProperty("RAW_BACKEND_RESPONSE"))
 
                 .log("<<< [Proxy OUT] Queue treatment successfully finished");
     }

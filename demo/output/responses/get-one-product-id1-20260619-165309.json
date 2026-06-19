@@ -1,0 +1,10 @@
+{
+  "capturedAt" : "2026-06-19T16:53:09.9029766",
+  "routeId" : "proxy-out-get-one-product",
+  "httpMethod" : "GET",
+  "endpoint" : "http://localhost:8082/product/detail/1",
+  "httpStatus" : 404,
+  "response" : {
+    "content" : "does not exist"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "capturedAt" : "2026-06-19T17:01:59.1403052",
+  "routeId" : "proxy-out-delete-product",
+  "httpMethod" : "DELETE",
+  "endpoint" : "http://localhost:8082/product/delete/3",
+  "httpStatus" : 200,
+  "response" : {
+    "content" : "product deleted"
+  }
+}

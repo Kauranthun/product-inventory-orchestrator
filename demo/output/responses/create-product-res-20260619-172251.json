@@ -1,0 +1,10 @@
+{
+  "capturedAt" : "2026-06-19T17:22:51.942212",
+  "routeId" : "proxy-out-create-product",
+  "httpMethod" : "POST",
+  "endpoint" : "http://localhost:8082/product/create",
+  "httpStatus" : 200,
+  "response" : {
+    "content" : "product created"
+  }
+}

@@ -28,7 +28,6 @@ public class UpdateRoute extends RouteBuilder{
         onException(Exception.class)
                 .handled(true)
                 .log("ERROR in update-" + AppConfig.ENTITY_NAME + ": ${exception.message}")
-                .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500))
                 .setBody(simple("""
                          {"error": "${exception.message}", "routeId": "update-%s"}"""
                         .formatted(AppConfig.ENTITY_NAME)))
@@ -70,15 +69,11 @@ public class UpdateRoute extends RouteBuilder{
 
                 .to(AppConfig.BASE_URL + "/product/update?bridgeEndpoint=true&throwExceptionOnFailure=false")
 
-                .setProperty("RAW_BACKEND_RESPONSE", body())
-
                 .process(responseProcessor)
                 .to("file:%s?fileName=update-%s-id${header.targetId}-res-${date:now:%s}.json"
                         .formatted(AppConfig.OUTPUT_DIR,
                                 AppConfig.ENTITY_NAME,
                                 AppConfig.TIMESTAMP_FORMAT))
-
-                .setBody(exchangeProperty("RAW_BACKEND_RESPONSE"))
 
                 .log("<<< [Proxy OUT] Queue treatment successfully finished");
 
